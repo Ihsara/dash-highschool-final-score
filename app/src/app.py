@@ -3,25 +3,28 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
+import plotly.plotly as py
+import plotly.graph_objs as go
+
 import pandas as pd
 from pathlib import Path
 
 
 
-__file__ = "../nhse-dataset/province_code.xlsx"
+__file__ = "../dat/province_code.xlsx"
+BASE_DIR_DATA = "../dat/{}.csv"
 
-p = Path(__file__).parents[1]
 
 def get_data(ref_province):
     data_wrapper = {}
     for province_id in range(64):
         try:
-            data_wraper[ref_province[ref_province["SỐ TT CỤM THI"] == province_id]["ĐIẠ PHƯƠNG"].values[0]] = pd.read_csv(BASE_DIR_DATA.format(province_id))
+            data_wrapper[ref_province[ref_province["SỐ TT CỤM THI"] == province_id]["ĐIẠ PHƯƠNG"].values[0]] = pd.read_csv(BASE_DIR_DATA.format(province_id))
         except FileNotFoundError:
             pass
     return data_wrapper
 
-province_ref = pd.read_excel(p)
+province_ref = pd.read_excel(__file__)
 data_wrapper = get_data(province_ref)
 
 
@@ -30,7 +33,7 @@ app = dash.Dash()
 app.layout = html.Div(children=[
     html.H1(children='Hello Dash'),
 
-    html.p(children='''
+    html.P(children='''
         This is the test paragraph
     '''),
 
@@ -42,7 +45,7 @@ app.layout = html.Div(children=[
         id='example-graph',
         figure={
             'data': [
-                        go.Histogram(x=data_wraper["TP.HCM"]['LÝ'],  histnorm='probability')
+                        go.Histogram(x=data_wrapper["TP.HCM"]['LÝ'],  histnorm='probability')
             ],
             'layout': {
                 'title': 'Điểm thi Toán THPT của TP.HCM 2018'
